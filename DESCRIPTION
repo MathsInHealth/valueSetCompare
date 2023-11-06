@@ -1,0 +1,21 @@
+Package: valueSetCompare
+Type: Package
+Title: Comparing HRQoL Instrument Value Sets
+Version: 0.0.3
+Author: Kim Rand, Anabel Estévez-Carrillo
+Maintainer: MathsInHealth <krand@mathsinhealth.com>
+Description: The package contains a set of functions designed to compare health-related quality of life (HRQoL) instrument Value Sets. 
+  These functions enable the comparison of both theoretical and empirical characteristics of the value sets.
+License: GPL (>= 2)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 7.2.3
+Depends: 
+    R (>= 3.5)
+Imports: 
+    dplyr,
+    ggplot2,
+    eq5dsuite
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
