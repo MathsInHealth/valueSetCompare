@@ -4,7 +4,7 @@ Title: Comparing HRQoL Instrument Value Sets
 Version: 0.0.3
 Author: Kim Rand, Anabel Estévez-Carrillo
 Maintainer: MathsInHealth <krand@mathsinhealth.com>
-Description: The package contains a set of functions designed to compare health-related quality of life (HRQoL) instrument Value Sets. 
+Description: TEST The package contains a set of functions designed to compare health-related quality of life (HRQoL) instrument Value Sets. 
   These functions enable the comparison of both theoretical and empirical characteristics of the value sets.
 License: GPL (>= 2)
 Encoding: UTF-8
