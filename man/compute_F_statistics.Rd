@@ -27,6 +27,8 @@ compute_F_statistics(
 
 \item{utility_columns}{A character vector specifying the names of utility columns.}
 
+\item{utility_combinations}{A matrix with two rows indicating the utility columns combinations. Default is all possible combinations of the elements of utility_columns taken 2 at a time.}
+
 \item{weight_column}{A character string specifying the name of the weight column. Default is "VAS".}
 
 \item{weight_range}{A numeric vector specifying the range of weights. Default is c(0:100).}
@@ -49,7 +51,7 @@ compute_F_statistics(
 
 \item{y_max_value}{A numeric value specifying the maximum value for the y-axis. Default is NULL.}
 
-\item{combinations}{A matrix with two rows indicating the utility columns combinations. Default is all possible combinations of the elements of utility_columns taken 2 at a time.}
+\item{F_stats_groups}{An optional data frame of pre-computed group-based F-statistics. Default is NULL.}
 }
 \value{
 A list containing two elements: 'df' which is a data frame of weighted statistics, and 'plot' which is the ggplot object representing the ribbon plot.
@@ -58,10 +60,27 @@ A list containing two elements: 'df' which is a data frame of weighted statistic
 This function computes F-statistics for specified utility columns in a data frame.
 }
 \examples{
-cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, country = "US", dim.names = c("mobility", "selfcare", "activity", "pain", "anxiety"))
-cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-cdta$EQXW <- eq5dsuite::eqxw(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-result <- compute_F_statistics(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
-result <- compute_F_statistics(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"), utility_combinations = matrix(c("EQ5D5L", "EQ5D3L", "EQ5D5L", "EQXW"), nrow = 2))
-result$plot
+\donttest{
+  # Define dimension names for EQ-5D-3L and EQ-5D-5L
+  dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+  dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+  # Compute EQ-5D scores using the eq5dsuite package
+  cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
+                                   country = "US", 
+                                   dim.names = dim.names.3L)
+  cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
+                                   country = "US", 
+                                   dim.names = dim.names.5L)
+  cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
+                               country = "US", 
+                               dim.names = dim.names.5L)
+  # Define combinations of utility columns for F-statistics calculation
+  utility_combinations <- matrix(c("EQ5D5L", "EQ5D3L", "EQ5D5L", "EQXW"), nrow = 2)
+  # Compute F-statistics for the utility columns
+  result <- compute_F_statistics(df = cdta, 
+                                 utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"), 
+                                 utility_combinations = utility_combinations)
+  # Plot the results
+  print(result$plot)
+}
 }

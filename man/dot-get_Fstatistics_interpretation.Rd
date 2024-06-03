@@ -7,13 +7,13 @@
 .get_Fstatistics_interpretation(errorbar_plot, utility_combinations = NULL)
 }
 \arguments{
-\item{errorbar_plot}{A numeric vector specifying the quartiles for interpretation. Default is c(0, 0.25, 0.5, 0.75, 1).}
+\item{errorbar_plot}{A ggplot object containing an error bar plot.}
 
-\item{ribbon_plot}{A F-statistics error bar plot to be interpreted.}
+\item{utility_combinations}{A matrix or data frame of utility combinations corresponding to the x-axis labels (default is NULL).}
 }
 \value{
 A list containing the interpretation results for each combination of types in the F-statistic plot.
-        Each list element contains details about sinficance, mean, confidence interval.
+        Each list element contains details about significance, mean, confidence interval.
 }
 \description{
 This function extracts and interprets the results from a given F-statistics error bar plot.

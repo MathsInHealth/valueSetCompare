@@ -1,19 +1,19 @@
-#' @title example_data
+#' @title cdta
 #' @description A dataset with 3749 participants from six countries containing EQ-5D-3L and EQ-5D-5L data. 
 #' @format A data frame with 3749 rows and 20 variables:
 #' \describe{
 #'   \item{\code{conditiongroups}}{integer An integer variable representing different health conditions. Values range from 1 to 10, where each value corresponds to the following conditions, in order:
 #'     \enumerate{
-#'       \item \code{1}: COPD/Asthma
-#'       \item \code{2}: Diabetes
-#'       \item \code{3}: Liver disease
-#'       \item \code{4}: RA/A
-#'       \item \code{5}: CVD
-#'       \item \code{6}: Stroke
-#'       \item \code{7}: Depression
-#'       \item \code{8}: Personality Disorder
-#'       \item \code{9}: Other
-#'       \item \code{10}: Students
+#'       \item COPD/Asthma
+#'       \item Diabetes
+#'       \item Liver disease
+#'       \item RA/A
+#'       \item CVD
+#'       \item Stroke
+#'       \item Depression
+#'       \item Personality Disorder
+#'       \item Other
+#'       \item Students
 #'     }}
 #'   \item{\code{studyID}}{integer Identification of the origical study}
 #'   \item{\code{profile3L}}{integer EQ-5D-3L Health state}
@@ -37,6 +37,6 @@
 #'}
 #' @docType data
 #' @keywords datasets
-#' @name example_data
-#' @usage data(example_data)
+#' @name cdta
+#' @usage data(cdta)
 NULL

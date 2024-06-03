@@ -51,7 +51,7 @@ severity_ribbon_plot(
 
 \item{number_of_samples}{An integer specifying the number of bootstrap samples. Default is 1000.}
 
-\item{probability_levels}{A named vector specifying the probability levels for quantiles.}
+\item{probability_levels}{A named vector specifying the probability levels for quantile.}
 
 \item{graph_title}{A string specifying the title of the graph. Default is an empty string.}
 
@@ -73,17 +73,19 @@ severity_ribbon_plot(
 
 \item{alpha_2}{A numeric value between 0 and 1 to define the transparency of the confidence interval range. Default is 0.05.}
 
-\item{linetype_1}{A numeric value between 0 and 1 to define the linetype of the interquartile range. Default is 1 "solid".}
+\item{linetype_1}{A numeric value between 0 and 1 to define the line type of the interquartile range. Default is 1 "solid".}
 
-\item{linetype_2}{A numeric value between 0 and 1 to define the linetype of the confidence interval range. Default 2 "dashed".}
+\item{linetype_2}{A numeric value between 0 and 1 to define the line type of the confidence interval range. Default 2 "dashed".}
 
-\item{interpretation_quartiles}{A numeric vector of values between 0 and 1 to define the quartile ranges for the figure interpretation. Default is c(0, 0.25, 0.5, 0.75, 1)}
+\item{interpretation_quartiles}{A numeric vector of values between 0 and 1 to define the quantile ranges for the figure interpretation. Default is c(0, 0.25, 0.5, 0.75, 1)}
 
 \item{elevation_threshold}{A numeric value specifying the threshold for elevation differences. Default is 0.05.}
 
 \item{slope_threshold}{A numeric value specifying the threshold for slope differences. Default is 0.02.}
 
 \item{color_palette}{A character vector specifying the color palette for the plot. Default is c("#8dd3c7", "#bebada", "#80b1d3", "#fb8072", "#ffff67", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd").}
+
+\item{weighted_statistics}{An optional data frame of pre-computed weighted statistics. Default is NULL.}
 }
 \value{
 A list containing three elements: 'df' which is a data frame of weighted statistics, 'plot' which is the ggplot object representing the ribbon plot and 'interpretation' with the automatic interpretation of the ribbon plot.
@@ -92,8 +94,21 @@ A list containing three elements: 'df' which is a data frame of weighted statist
 This function generates a ribbon plot for given utility columns, based on weighted statistics.
 }
 \examples{
-cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, country = "US", dim.names = c("mobility", "selfcare", "activity", "pain", "anxiety"))
-cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-cdta$EQXW <- eq5dsuite::eqxw(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-result <- severity_ribbon_plot(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+\donttest{
+  # Define dimension names for EQ-5D-3L and EQ-5D-5L
+  dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+  dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+  # Compute EQ-5D scores using the eq5dsuite package
+  cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
+                                   country = "US", 
+                                   dim.names = dim.names.3L)
+  cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
+                                   country = "US", 
+                                   dim.names = dim.names.5L)
+  cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
+                               country = "US", 
+                               dim.names = dim.names.5L)
+  # Get severity ribbon plot
+  result <- severity_ribbon_plot(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+}
 }

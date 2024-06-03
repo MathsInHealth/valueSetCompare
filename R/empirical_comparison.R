@@ -5,19 +5,27 @@
 #' @param utility_columns A character vector specifying the names of utility columns.
 #' @param graph_title A character string specifying the title of the graph. Default is an empty string.
 #' @param x_axis_title A character string specifying the title of the x-axis. Default is "Index Value".
-#' @param xMinValue A numeric specifying the minimum value for the x-axis. Default is NULL.
-#' @param xMaxValue A numeric specifying the maximum value for the x-axis. Default is NULL.
+#' @param x_min_value A numeric specifying the minimum value for the x-axis. Default is NULL.
+#' @param x_max_value A numeric specifying the maximum value for the x-axis. Default is NULL.
 #' @param y_axis_title A character string specifying the title of the y-axis. Default is "Density".
-#' @param yMinValue A numeric specifying the minimum value for the y-axis. Default is NULL.
-#' @param yMaxValue A numeric specifying the maximum value for the y-axis. Default is NULL.
-#' @param legendName A character string specifying the name of the legend. Default is "".
+#' @param y_min_value A numeric specifying the minimum value for the y-axis. Default is NULL.
+#' @param y_max_value A numeric specifying the maximum value for the y-axis. Default is NULL.
+#' @param legend_name A character string specifying the name of the legend. Default is "".
 #' @param color_palette A character vector specifying the colors for the density lines. Default is a predefined color palette.
-#' @param color_palette A character vector specifying the line types for the density lines. Default is solid.
+#' @param line_types A character vector specifying the line types for the density lines. Default is solid.
 #' @return A ggplot object visualizing the density of utilities for the specified EQ5D versions and other instruments value sets.
 #' @examples
-#' cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, country = "US", dim.names = c("mobility", "selfcare", "activity", "pain", "anxiety"))
-#' cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-#' cdta$EQXW <- eq5dsuite::eqxw(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
+#' dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+#' cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, 
+#'                                 country = "US", 
+#'                                 dim.names = dim.names.3L)
+#' dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+#' cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
+#'                                 country = "US", 
+#'                                 dim.names = dim.names.5L)
+#' cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
+#'                             country = "US", 
+#'                             dim.names = dim.names.5L)
 #' density_plot_empirical(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
 #' @export
 
@@ -72,7 +80,7 @@ density_plot_empirical <- function(df,
   }))
   
   # Create plot
-  density_plot <- ggplot(df_long, aes(x = utility, color = type, linetype = type)) +
+  density_plot <- ggplot(df_long, aes(x = .data$utility, color = .data$type, linetype = .data$type)) +
     geom_density(size = 1) +
     labs(title = graph_title, x = x_axis_title, y = y_axis_title) +
     coord_cartesian(xlim = c(x_min_value, x_max_value), ylim = c(y_min_value, y_max_value)) + 
@@ -242,7 +250,7 @@ density_plot_empirical <- function(df,
 
 .calculate_quantiles <- function(data_array, data_margin = 2, quantile_levels = c("min" = 0, "2.5%" = 0.025, "25%" = 0.25, "median" = 0.5, "75%" = 0.75, "97.5%" = 0.975, "max" = 1)) {
   quantile_results <- as.data.frame(t(apply(X = data_array, MARGIN = data_margin, FUN = function(x) {
-    c(MEAN = mean(x, na.rm = TRUE), SD = sd(x, na.rm = TRUE), quantile(x, probs = quantile_levels, na.rm = TRUE))
+    c(MEAN = mean(x, na.rm = TRUE), SD = stats::sd(x, na.rm = TRUE), stats::quantile(x, probs = quantile_levels, na.rm = TRUE))
   })))
   return(quantile_results)
 }
@@ -292,37 +300,46 @@ density_plot_empirical <- function(df,
 #' @param color_palette A character vector specifying the color palette to use for the plot. Default is a set of 10 colors.
 #' @return A ggplot2 object representing the plot.
 #' @keywords internal
+#' @importFrom rlang .data
 
 .create_severity_ribbon_plot <- function(df, 
-                                             graph_title = "", 
-                                             x_axis_title = "", 
-                                             y_axis_title = "", 
-                                             legend_name = "Type", 
-                                             legend_labels = NULL,
-                                            y_axis_limits = c(0.15, 0.95), 
-                                            y_min_value = "2.5%", 
-                                            y_max_value = "97.5%",
-                                            alpha_1 = 0.5,
-                                            alpha_2 = 0.3,
-                                            linetype_1 = 5, 
-                                            linetype_2 = 2,
-                                            color_palette = c("#bebada", "#fb8072","#8dd3c7","#80b1d3", "#ffff67", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd")) {
+                                         graph_title = "", 
+                                         x_axis_title = "", 
+                                         y_axis_title = "", 
+                                         legend_name = "Type", 
+                                         legend_labels = NULL,
+                                         y_axis_limits = c(0.15, 0.95), 
+                                         y_min_value = "2.5%", 
+                                         y_max_value = "97.5%",
+                                         alpha_1 = 0.5,
+                                         alpha_2 = 0.3,
+                                         linetype_1 = 5, 
+                                         linetype_2 = 2,
+                                         color_palette = c("#bebada", "#fb8072","#8dd3c7","#80b1d3", "#ffff67", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd")) {
   # Create initial plot
-  ribbon_graph <- ggplot(data = df, mapping = aes(x = topval, y = MEAN, ymin = lb, ymax = ub, color = type, fill = type, group = type)) +
+  ribbon_graph <- ggplot(data = df, mapping = aes(x = .data$topval, 
+                                                  y = .data$MEAN, 
+                                                  ymin = .data$lb, 
+                                                  ymax = .data$ub, 
+                                                  color = .data$type, 
+                                                  fill = .data$type, 
+                                                  group = .data$type)) +
     theme_bw() +  
     geom_line(size = 1.2) +
     geom_ribbon(alpha = alpha_1, linetype = linetype_1) +
     geom_ribbon(aes(ymin = df[[y_min_value]], ymax = df[[y_max_value]]), alpha = alpha_2, linetype = linetype_2)
+  
   # Add labels, title, and color scales
   ribbon_graph <- ribbon_graph +
     labs(x = x_axis_title, y = y_axis_title, title = graph_title, color = legend_name, fill = legend_name) +
     ylim(y_axis_limits[1], y_axis_limits[2]) +
     theme(legend.position = "bottom",  
           text = element_text(size = 12),  
-          axis.title = element_text(size = 14, face = "bold"), 
+          axis.title = element_text(size = 14), 
           plot.title = element_text(size = 16, face = "bold"),
           panel.grid.major = element_line(color = "grey90"),  
           panel.grid.minor = element_line(color = "grey95"))
+  
   # Modify legend labels if specified
   if (!is.null(legend_labels)) {
     # Add color scales with custom labels
@@ -335,6 +352,7 @@ density_plot_empirical <- function(df,
       scale_color_manual(values = color_palette) + 
       scale_fill_manual(values = color_palette)
   }
+  
   return(ribbon_graph)
 }
 
@@ -375,9 +393,9 @@ density_plot_empirical <- function(df,
 #' @keywords internal
 
 .get_severity_interpretation <- function(ribbon_plot, 
-                                        quartiles = c(0, 0.25, 0.5, 0.75, 1),  
-                                        elevation_threshold = 0.05, 
-                                        slope_threshold = 0.07) {
+                                         quartiles = c(0, 0.25, 0.5, 0.75, 1),  
+                                         elevation_threshold = 0.05, 
+                                         slope_threshold = 0.02) {
   
   # Extract data from the ggplot object
   g <- ggplot_build(ribbon_plot)
@@ -431,7 +449,7 @@ density_plot_empirical <- function(df,
       )
       slope_change_list[[q]] <- slope_change
     }
-
+    
     return(list(types = c(combinations[1, i], combinations[2, i]), 
                 elevation_threshold = elevation_threshold,
                 slope_threshold = slope_threshold,
@@ -443,16 +461,19 @@ density_plot_empirical <- function(df,
   return(results)
 }
 
-#' @title .write_severity_intepretation
+#' @title .write_severity_interpretation
 #' @description This function generates the interpretation of the results obtained from a severity ribbon plot.
-#' @param intepretation_results A list containing the interpretation results for each combination of types in the ribbon plot. 
+#' @param ribbon_plot A severity ribbon plot to be interpreted.
+#' @param quartiles A numeric vector specifying the quartiles for interpretation. Default is c(0, 0.25, 0.5, 0.75, 1).
+#' @param elevation_threshold A numeric value specifying the threshold for elevation differences. Default is 0.05.
+#' @param slope_threshold A numeric value specifying the threshold for slope differences. Default is 0.02.
 #' @return A character vector containing the interpretation paragraphs for each combination of types in the ribbon plot.
 #' @keywords internal
 
-.write_severity_intepretation <- function(ribbon_plot, 
+.write_severity_interpretation <- function(ribbon_plot, 
                                           quartiles = c(0, 0.25, 0.5, 0.75, 1),  
                                           elevation_threshold = 0.05, 
-                                          slope_threshold = 0.07) {
+                                          slope_threshold = 0.02) {
   # Get results
   intepretation_results <- .get_severity_interpretation(ribbon_plot, quartiles, elevation_threshold, slope_threshold)
   # Write results
@@ -676,7 +697,7 @@ density_plot_empirical <- function(df,
     ratio_name <- paste0("F_ratio\n (", var1, " / \n", var2, ")")
     new_col <- df[[var1]] / df[[var2]]
     # Return as named list
-    return(setNames(list(new_col), ratio_name))
+    return(stats::setNames(list(new_col), ratio_name))
   })
   # Flatten the list of new columns and bind them to the original data frame
   new_cols_df <- do.call(cbind.data.frame, new_cols)
@@ -706,18 +727,18 @@ density_plot_empirical <- function(df,
     paste0("F_ratio\n (", col[1], " / \n", col[2], ")")
   })
   F_ratio_df$type <- factor(F_ratio_df$type, levels = combination_order)
-                            
+  
   # Create ggplot
   plot <- ggplot(F_ratio_df) +
     theme_bw() + 
-    geom_bar(aes(x=type, y=`Full sample`),  stat = "identity", position = "dodge", fill = "#d9d9d9") +
-    geom_errorbar(aes(x= type, ymin = `2.5%`, ymax = `97.5%`),
+    geom_bar(aes(x=.data$type, y=.data$`Full sample`),  stat = "identity", position = "dodge", fill = "#d9d9d9") +
+    geom_errorbar(aes(x= .data$type, ymin = .data$`2.5%`, ymax = .data$`97.5%`),
                   width = 0.4,
                   colour = "orange",
                   alpha = 0.9,
                   size = 1.3) + 
     geom_hline(yintercept = 1, linetype = "dashed", color = "black") + 
-    geom_text(aes(x = type, y = `Full sample`, label = sprintf("%.2f", `Full sample`)), vjust = -0.5) +
+    geom_text(aes(x = .data$type, y = .data$`Full sample`, label = sprintf("%.2f", .data$`Full sample`)), vjust = -0.5) +
     ggtitle(graph_title) + 
     xlab(x_axis_title) + 
     ylab(y_axis_title) 
@@ -731,10 +752,10 @@ density_plot_empirical <- function(df,
 
 #' @title .get_Fstatistics_interpretation
 #' @description This function extracts and interprets the results from a given F-statistics error bar plot.
-#' @param ribbon_plot A F-statistics error bar plot to be interpreted.
-#' @param errorbar_plot A numeric vector specifying the quartiles for interpretation. Default is c(0, 0.25, 0.5, 0.75, 1).
+#' @param errorbar_plot A ggplot object containing an error bar plot.
+#' @param utility_combinations A matrix or data frame of utility combinations corresponding to the x-axis labels (default is NULL).
 #' @return A list containing the interpretation results for each combination of types in the F-statistic plot.
-#'         Each list element contains details about sinficance, mean, confidence interval.
+#'         Each list element contains details about significance, mean, confidence interval.
 #' @keywords internal
 
 .get_Fstatistics_interpretation <- function(errorbar_plot, utility_combinations = NULL) {
@@ -762,8 +783,9 @@ density_plot_empirical <- function(df,
 
 #' @title .write_Fstatistics_interpretation
 #' @description This function generates the interpretation of the results obtained from a F-statistics plot.
-#' @param intepretation_results A list containing the interpretation results for the F-statistics plot. 
-#' @return A character vector containing the interpretation paragraphs for each combination of types in the ribbon plot.
+#' @param errorbar_plot A ggplot object containing an error bar plot.
+#' @param utility_combinations A matrix or data frame of utility combinations corresponding to the x-axis labels (default is NULL). 
+#' @return A character vector containing the interpretation paragraphs for each combination of types in the F-statistic plot.
 #' @keywords internal
 
 .write_Fstatistics_interpretation <- function(errorbar_plot, utility_combinations = NULL) {
@@ -773,14 +795,21 @@ density_plot_empirical <- function(df,
   summary_list <- lapply(seq_along(interpretation_results), function(i) {
     vs_names <- interpretation_results[[i]]$vs_names
     if (interpretation_results[[i]]$significant == FALSE){
-      paragraph <- sprintf("The results from the F-statistic comparing %s and %s indicated no statistically significant difference (F-statistic ratio: %.2f, 95%% CI %.2f–%.2f).", 
-                           vs_names[[1]], vs_names[[2]], interpretation_results[[i]]$mean, interpretation_results[[i]]$CI_LB, interpretation_results[[i]]$CI_UB)
+      if(interpretation_results[[i]]$mean > 1){
+        paragraph <- sprintf("The results from the F-statistic comparing %s and %s indicated no statistically significant difference (F-statistic ratio: %.2f, 95%% CI %.2f-%.2f).
+                             Although this comparison does not achieve statistical significance, it suggest a higher statistically efficiency in the %s value set compared to %s.", 
+                             vs_names[[1]], vs_names[[2]], interpretation_results[[i]]$mean, interpretation_results[[i]]$CI_LB, interpretation_results[[i]]$CI_UB, vs_names[[1]], vs_names[[2]])
+      } else {
+        paragraph <- sprintf("The results from the F-statistic comparing %s and %s indicated no statistically significant difference (F-statistic ratio: %.2f, 95%% CI %.2f-%.2f).
+                             Although this comparison does not achieve statistical significant, it suggest a higher statistically efficiency in the %s value set compared to %s.", 
+                             vs_names[[1]], vs_names[[2]], interpretation_results[[i]]$mean, interpretation_results[[i]]$CI_LB, interpretation_results[[i]]$CI_UB, vs_names[[2]], vs_names[[1]])
+      }
     } else {
       if (interpretation_results[[i]]$mean > 1){
-        paragraph <- sprintf("The %s value set tended to be more discriminative than the %s (F-statistic ratio: %.2f, 95%% CI %.2f–%.2f).", 
+        paragraph <- sprintf("The %s value set tended to be more discriminative than the %s (F-statistic ratio: %.2f, 95%% CI %.2f-%.2f).", 
                              vs_names[[1]], vs_names[[2]], interpretation_results[[i]]$mean, interpretation_results[[i]]$CI_LB, interpretation_results[[i]]$CI_UB)
       } else{
-        paragraph <- sprintf("The %s value set tended to be less discriminative than the %s (F-statistic ratio: %.2f, 95%% CI %.2f–%.2f).", 
+        paragraph <- sprintf("The %s value set tended to be less discriminative than the %s (F-statistic ratio: %.2f, 95%% CI %.2f-%.2f).", 
                              vs_names[[1]], vs_names[[2]], interpretation_results[[i]]$mean, interpretation_results[[i]]$CI_LB, interpretation_results[[i]]$CI_UB)
       }
     }
@@ -800,7 +829,7 @@ density_plot_empirical <- function(df,
 #' @param weight_function A function to generate weights. Default is .makeWeightsMixed.
 #' @param sample_size An integer specifying the sample size for bootstrapping. Default is 1000.
 #' @param number_of_samples An integer specifying the number of bootstrap samples. Default is 1000.
-#' @param probability_levels A named vector specifying the probability levels for quantiles. 
+#' @param probability_levels A named vector specifying the probability levels for quantile. 
 #' @param graph_title A string specifying the title of the graph. Default is an empty string.
 #' @param x_axis_title A string specifying the title for the x-axis. Default is an empty string.
 #' @param y_axis_title A string specifying the title for the y-axis. Default is an empty string.
@@ -811,47 +840,61 @@ density_plot_empirical <- function(df,
 #' @param y_max_value A string specifying the maximum value for the y-axis. 
 #' @param alpha_1 A numeric value between 0 and 1 to define the transparency of the interquartile range. Default is 0.15.
 #' @param alpha_2 A numeric value between 0 and 1 to define the transparency of the confidence interval range. Default is 0.05.
-#' @param linetype_1 A numeric value between 0 and 1 to define the linetype of the interquartile range. Default is 1 "solid".
-#' @param linetype_2 A numeric value between 0 and 1 to define the linetype of the confidence interval range. Default 2 "dashed".
+#' @param linetype_1 A numeric value between 0 and 1 to define the line type of the interquartile range. Default is 1 "solid".
+#' @param linetype_2 A numeric value between 0 and 1 to define the line type of the confidence interval range. Default 2 "dashed".
 #' @param color_palette A character vector specifying the color palette for the plot. Default is c("#8dd3c7", "#bebada", "#80b1d3", "#fb8072", "#ffff67", "#fdb462", "#b3de69", "#fccde5", "#d9d9d9", "#bc80bd").
-#' @param interpretation_quartiles A numeric vector of values between 0 and 1 to define the quartile ranges for the figure interpretation. Default is c(0, 0.25, 0.5, 0.75, 1)
+#' @param interpretation_quartiles A numeric vector of values between 0 and 1 to define the quantile ranges for the figure interpretation. Default is c(0, 0.25, 0.5, 0.75, 1)
 #' @param elevation_threshold A numeric value specifying the threshold for elevation differences. Default is 0.05.
 #' @param elevation_threshold A numeric value specifying the threshold for elevation differences. Default is 0.05.
 #' @param slope_threshold A numeric value specifying the threshold for slope differences. Default is 0.02.
+#' @param weighted_statistics An optional data frame of pre-computed weighted statistics. Default is NULL.
 #' @return A list containing three elements: 'df' which is a data frame of weighted statistics, 'plot' which is the ggplot object representing the ribbon plot and 'interpretation' with the automatic interpretation of the ribbon plot.
 #' @examples
-#' cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, country = "US", dim.names = c("mobility", "selfcare", "activity", "pain", "anxiety"))
-#' cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-#' cdta$EQXW <- eq5dsuite::eqxw(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-#' result <- severity_ribbon_plot(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+#' \donttest{
+#'   # Define dimension names for EQ-5D-3L and EQ-5D-5L
+#'   dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+#'   dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+#'   # Compute EQ-5D scores using the eq5dsuite package
+#'   cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
+#'                                    country = "US", 
+#'                                    dim.names = dim.names.3L)
+#'   cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
+#'                                    country = "US", 
+#'                                    dim.names = dim.names.5L)
+#'   cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
+#'                                country = "US", 
+#'                                dim.names = dim.names.5L)
+#'   # Get severity ribbon plot
+#'   result <- severity_ribbon_plot(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+#' }
 #' @export
 
 severity_ribbon_plot <- function(df, 
-                                utility_columns, 
-                                weight_column = "VAS", 
-                                weight_range = c(0:100),
-                                weight_values = NULL,
-                                weight_function = .makeWeightsMixed,
-                                sample_size = 1000, 
-                                number_of_samples = 1000, 
-                                probability_levels = c("min" = 0, "2.5%" = 0.025, "25%" = 0.25, "median" = 0.5, "75%" = 0.75, "97.5%" = 0.975, "max" = 1), 
-                                graph_title = "", 
-                                x_axis_title = "", 
-                                y_axis_title = "", 
-                                legend_name = "Type", 
-                                legend_labels = NULL, 
-                                y_axis_limits = c(0.15, 0.95),  
-                                y_min_value = "2.5%", 
-                                y_max_value = "97.5%",
-                                alpha_1 = 0.15,
-                                alpha_2 = 0.05,
-                                linetype_1 = 1, 
-                                linetype_2 = 2,
-                                interpretation_quartiles = c(0, 0.25, 0.5, 0.75, 1),
-                                elevation_threshold = 0.05, 
-                                slope_threshold = 0.02,
-                                color_palette = NULL,
-                                weighted_statistics = NULL){
+                                 utility_columns, 
+                                 weight_column = "VAS", 
+                                 weight_range = c(0:100),
+                                 weight_values = NULL,
+                                 weight_function = .makeWeightsMixed,
+                                 sample_size = 1000, 
+                                 number_of_samples = 1000, 
+                                 probability_levels = c("min" = 0, "2.5%" = 0.025, "25%" = 0.25, "median" = 0.5, "75%" = 0.75, "97.5%" = 0.975, "max" = 1), 
+                                 graph_title = "", 
+                                 x_axis_title = "", 
+                                 y_axis_title = "", 
+                                 legend_name = "Type", 
+                                 legend_labels = NULL, 
+                                 y_axis_limits = c(0.15, 0.95),  
+                                 y_min_value = "2.5%", 
+                                 y_max_value = "97.5%",
+                                 alpha_1 = 0.15,
+                                 alpha_2 = 0.05,
+                                 linetype_1 = 1, 
+                                 linetype_2 = 2,
+                                 interpretation_quartiles = c(0, 0.25, 0.5, 0.75, 1),
+                                 elevation_threshold = 0.05, 
+                                 slope_threshold = 0.02,
+                                 color_palette = NULL,
+                                 weighted_statistics = NULL){
   
   # Check df
   if (!is.data.frame(df)) {
@@ -904,30 +947,30 @@ severity_ribbon_plot <- function(df,
   
   # Analyze and plot
   ribbon_plot <- .create_severity_ribbon_plot(df = weighted_statistics[weighted_statistics$type != weight_column, ],
-                                                  graph_title = graph_title, 
-                                                  x_axis_title = x_axis_title, 
-                                                  y_axis_title = y_axis_title, 
-                                                  legend_name = legend_name, 
-                                                  legend_labels = legend_labels,
-                                                  y_axis_limits = y_axis_limits, 
-                                                  y_min_value = y_min_value, 
-                                                  y_max_value = y_max_value, 
-                                                  alpha_1 = alpha_1, 
-                                                  alpha_2 = alpha_2, 
-                                                  linetype_1 = linetype_1,
-                                                  linetype_2 = linetype_2,
-                                                  color_palette = color_palette)
+                                              graph_title = graph_title, 
+                                              x_axis_title = x_axis_title, 
+                                              y_axis_title = y_axis_title, 
+                                              legend_name = legend_name, 
+                                              legend_labels = legend_labels,
+                                              y_axis_limits = y_axis_limits, 
+                                              y_min_value = y_min_value, 
+                                              y_max_value = y_max_value, 
+                                              alpha_1 = alpha_1, 
+                                              alpha_2 = alpha_2, 
+                                              linetype_1 = linetype_1,
+                                              linetype_2 = linetype_2,
+                                              color_palette = color_palette)
   # Get interpretation
-  interpretation_description <- .write_severity_intepretation(ribbon_plot, quartiles = interpretation_quartiles, elevation_threshold = elevation_threshold, slope_threshold = slope_threshold)
+  interpretation_description <- .write_severity_interpretation(ribbon_plot, quartiles = interpretation_quartiles, elevation_threshold = elevation_threshold, slope_threshold = slope_threshold)
   return(list(df = weighted_statistics, plot = ribbon_plot, interpretation = interpretation_description))
-
+  
 }
 
 #' @title compute_F_statistics
 #' @description This function computes F-statistics for specified utility columns in a data frame. 
 #' @param df A data frame containing the utility and weight columns.
 #' @param utility_columns A character vector specifying the names of utility columns.
-#' @param combinations A matrix with two rows indicating the utility columns combinations. Default is all possible combinations of the elements of utility_columns taken 2 at a time.
+#' @param utility_combinations A matrix with two rows indicating the utility columns combinations. Default is all possible combinations of the elements of utility_columns taken 2 at a time.
 #' @param weight_column A character string specifying the name of the weight column. Default is "VAS".
 #' @param weight_range A numeric vector specifying the range of weights. Default is c(0:100).
 #' @param sample_size An integer specifying the sample size for bootstrapping. Default is 1000.
@@ -939,16 +982,34 @@ severity_ribbon_plot <- function(df,
 #' @param y_axis_title A character string specifying the title for the y-axis. Default is an empty string.
 #' @param y_min_value A numeric value specifying the minimum value for the y-axis. Default is NULL.
 #' @param y_max_value A numeric value specifying the maximum value for the y-axis. Default is NULL.
+#' @param F_stats_groups An optional data frame of pre-computed group-based F-statistics. Default is NULL.
 #' @return A list containing two elements: 'df' which is a data frame of weighted statistics, and 'plot' which is the ggplot object representing the ribbon plot.
 #' @examples
-#' cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, country = "US", dim.names = c("mobility", "selfcare", "activity", "pain", "anxiety"))
-#' cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-#' cdta$EQXW <- eq5dsuite::eqxw(x = cdta, country = "US", dim.names = c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L"))
-#' result <- compute_F_statistics(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
-#' result <- compute_F_statistics(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"), utility_combinations = matrix(c("EQ5D5L", "EQ5D3L", "EQ5D5L", "EQXW"), nrow = 2))
-#' result$plot
+#' \donttest{
+#'   # Define dimension names for EQ-5D-3L and EQ-5D-5L
+#'   dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+#'   dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+#'   # Compute EQ-5D scores using the eq5dsuite package
+#'   cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
+#'                                    country = "US", 
+#'                                    dim.names = dim.names.3L)
+#'   cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
+#'                                    country = "US", 
+#'                                    dim.names = dim.names.5L)
+#'   cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
+#'                                country = "US", 
+#'                                dim.names = dim.names.5L)
+#'   # Define combinations of utility columns for F-statistics calculation
+#'   utility_combinations <- matrix(c("EQ5D5L", "EQ5D3L", "EQ5D5L", "EQXW"), nrow = 2)
+#'   # Compute F-statistics for the utility columns
+#'   result <- compute_F_statistics(df = cdta, 
+#'                                  utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"), 
+#'                                  utility_combinations = utility_combinations)
+#'   # Plot the results
+#'   print(result$plot)
+#' }
 #' @export
- 
+
 compute_F_statistics <- function(df, 
                                  utility_columns, 
                                  utility_combinations = NULL,
@@ -964,21 +1025,7 @@ compute_F_statistics <- function(df,
                                  y_min_value = NULL, 
                                  y_max_value = NULL, 
                                  F_stats_groups = NULL) {
-  # Check df
-  if (!is.data.frame(df)) {
-    stop("Input df must be a data frame.")
-  } else {
-    if (nrow(df) == 0 || ncol(df) == 0) {
-      stop("Input data frame should not be empty.")
-    }
-  }
-  # Check df columns
-  if (!is.character(utility_columns) || !is.character(weight_column)) {
-    stop("utility_columns and must be of character type.")
-  }
-  if (length(unique(utility_columns)) != length(utility_columns)) {
-    stop("Utility columns should not have duplicates.")
-  }
+  
   if (length(utility_columns) < 2 || length(utility_columns) > 10){
     stop("Number of utility columns should be between 2 amd 10.")
   }
@@ -1034,7 +1081,5 @@ compute_F_statistics <- function(df,
   # Get interpretation
   interpretation_description <- .write_Fstatistics_interpretation(plot, utility_combinations)
   return(list(df = result, plot = plot, interpretation = interpretation_description))
+  # return(list(df = result, plot = plot))
 }
-
-
-

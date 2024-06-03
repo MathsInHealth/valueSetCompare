@@ -40,7 +40,7 @@
   }
   
   # Calculate utilities and add to df
-  utilities <- eq5d(x = df, country = value_sets, version = version, dim.names = dim.names)
+  utilities <- eq5dsuite::eq5d(x = df, country = value_sets, version = version, dim.names = dim.names)
   df <- cbind(df, utilities)
   colnames(df)[(ncol(df) - length(value_sets) + 1):ncol(df)] <- colnames
   
@@ -211,7 +211,7 @@
   
   # Add baseline HS, utility and mean
   single_transitions$baseline_HS <- df[[stateColumn]]
-  single_transitions$LSS <- rowSums(toEQ5Ddims(df[[stateColumn]]))
+  single_transitions$LSS <- rowSums(eq5dsuite::toEQ5Ddims(df[[stateColumn]]))
   single_transitions$baseline_utility <- df[[utilityColumn]]
   single_transitions$mean_transition <- rowMeans(single_transitions[,1:10], na.rm = TRUE)
   
@@ -229,7 +229,9 @@
 #' @return A data frame containing utility statistics for each provided value set. 
 #' @examples
 #' compute_utility_stats(value_sets_3L = "ES", value_sets_5L = "ES")
-#' value_set_other <- list(instrument1 = list(df = data.frame(state=c(1, 2, 3), utility = c(-1, 0, 1)), stateColumn = "state", utilityColumn = "utility"))
+#' value_set_other <- list(instrument1 = list(df = data.frame(state=c(1, 2, 3), utility = c(-1, 0, 1)), 
+#'                         stateColumn = "state", 
+#'                         utilityColumn = "utility"))
 #' compute_utility_stats(value_sets_3L = "AR", value_sets_others = value_set_other)
 #' @note Mean single level transitions are calculated only for EQ-5D.
 #' @export
@@ -331,7 +333,10 @@ compute_utility_stats <- function(value_sets_3L = NULL,
 #' @examples
 #' single_transition_plots(value_sets_5L = "IT")
 #' single_transition_plots(value_sets_3L = c("JP", "US"))  
-#' single_transition_plots(value_sets_3L ="ES", value_sets_5L = "ES", value_sets_XW = "ES", value_sets_XWR = "ES")        
+#' single_transition_plots(value_sets_3L ="ES", 
+#'                         value_sets_5L = "ES", 
+#'                         value_sets_XW = "ES", 
+#'                         value_sets_XWR = "ES")        
 #' @note This function is primarily intended to work with EQ5D data and it is not be applicable to other instruments.
 #' @export
 
@@ -363,8 +368,8 @@ single_transition_plots <- function(value_sets_3L = NULL,
   plot_list <- lapply(seq_along(input_list), function(i){
     version <- .get_EQ5D_version(input_list[[i]]$df, input_list[[i]]$stateColumn)
     singleTransitions <- .calculate_mean_transition(input_list[[i]]$df, version, input_list[[i]]$utilityColumn, input_list[[i]]$stateColumn)
-    ggplot(singleTransitions, aes(x = baseline_utility, y = mean_transition)) +
-      geom_point(aes(color = LSS), size = 2) +
+    ggplot(singleTransitions, aes(x = .data$baseline_utility, y = .data$mean_transition)) +
+      geom_point(aes(color = .data$LSS), size = 2) +
       geom_hline(yintercept = mean(singleTransitions[["mean_transition"]]), color = "darkgray", linewidth=1) +  
       labs(title = graph_title, x = x_axis_titles[[i]], y = y_axis_title) +
       coord_cartesian(ylim = c(y_min_value, y_max_value), xlim = c(x_min_value, x_max_value)) +
@@ -388,18 +393,21 @@ single_transition_plots <- function(value_sets_3L = NULL,
 #' @param value_sets_others A list of lists specifying the inputs for other instruments. Each list within the main list should be named and contain a data frame (`df`), a column specifying the health states (`stateColumn`), and a column specifying the utility values (`utilityColumn`).
 #' @param graph_title A character string specifying the title of the graph. Default is an empty string.
 #' @param x_axis_title A character string specifying the title of the x-axis. Default is "Index Value".
-#' @param xMinValue A numeric specifying the minimum value for the x-axis. Default is NULL.
-#' @param xMaxValue A numeric specifying the maximum value for the x-axis. Default is NULL.
+#' @param x_min_value A numeric specifying the minimum value for the x-axis. Default is NULL.
+#' @param x_max_value A numeric specifying the maximum value for the x-axis. Default is NULL.
 #' @param y_axis_title A character string specifying the title of the y-axis. Default is "Density".
-#' @param yMinValue A numeric specifying the minimum value for the y-axis. Default is NULL.
-#' @param yMaxValue A numeric specifying the maximum value for the y-axis. Default is NULL.
-#' @param legendName A character string specifying the name of the legend. Default is "".
+#' @param y_min_value A numeric specifying the minimum value for the y-axis. Default is NULL.
+#' @param y_max_value A numeric specifying the maximum value for the y-axis. Default is NULL.
+#' @param legend_name A character string specifying the name of the legend. Default is "".
 #' @param color_palette A character vector specifying the colors for the density lines. Default is a predefined color palette.
-#' @param color_palette A character vector specifying the line types for the density lines. Default is solid.
+#' @param line_types A character vector specifying the line types for the density lines. Default is solid.
 #' @return A ggplot object visualizing the density of utilities for the specified EQ5D versions and other instruments value sets.
 #' @examples
 #' density_plot_theorical(value_sets_3L = "NL", value_sets_5L = "NL")
-#' value_set_other <- list(test_instrument = list(df = data.frame(HS=c(123, 456, 789), val = c(-0.3, 0.1, 0.75)), stateColumn = "HS", utilityColumn = "val"))
+#' instrument <- data.frame(HS=c(123, 456, 789), val = c(-0.3, 0.1, 0.75))
+#' value_set_other <- list(test_instrument = list(df = instrument, 
+#'                         stateColumn = "HS", 
+#'                         utilityColumn = "val"))
 #' density_plot_theorical(value_sets_3L = "HU", value_sets_others = value_set_other)
 #' @export
 
@@ -446,7 +454,7 @@ density_plot_theorical <- function(value_sets_3L = NULL,
   }))
   
   # Create plot
-  density_plot <- ggplot(df_long, aes(x = utility, color = type, linetype = type)) +
+  density_plot <- ggplot(df_long, aes(x = .data$utility, color = .data$type, linetype = .data$type)) +
     geom_density(size = 1) +
     labs(title = graph_title, x = x_axis_title, y = y_axis_title) +
     coord_cartesian(xlim = c(x_min_value, x_max_value), ylim = c(y_min_value, y_max_value)) + 

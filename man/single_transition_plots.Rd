@@ -56,5 +56,8 @@ This function is primarily intended to work with EQ5D data and it is not be appl
 \examples{
 single_transition_plots(value_sets_5L = "IT")
 single_transition_plots(value_sets_3L = c("JP", "US"))  
-single_transition_plots(value_sets_3L ="ES", value_sets_5L = "ES", value_sets_XW = "ES", value_sets_XWR = "ES")        
+single_transition_plots(value_sets_3L ="ES", 
+                        value_sets_5L = "ES", 
+                        value_sets_XW = "ES", 
+                        value_sets_XWR = "ES")        
 }

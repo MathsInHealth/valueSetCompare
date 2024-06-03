@@ -37,19 +37,21 @@ density_plot_theorical(
 
 \item{x_axis_title}{A character string specifying the title of the x-axis. Default is "Index Value".}
 
+\item{x_min_value}{A numeric specifying the minimum value for the x-axis. Default is NULL.}
+
+\item{x_max_value}{A numeric specifying the maximum value for the x-axis. Default is NULL.}
+
 \item{y_axis_title}{A character string specifying the title of the y-axis. Default is "Density".}
 
-\item{color_palette}{A character vector specifying the line types for the density lines. Default is solid.}
+\item{y_min_value}{A numeric specifying the minimum value for the y-axis. Default is NULL.}
 
-\item{xMinValue}{A numeric specifying the minimum value for the x-axis. Default is NULL.}
+\item{y_max_value}{A numeric specifying the maximum value for the y-axis. Default is NULL.}
 
-\item{xMaxValue}{A numeric specifying the maximum value for the x-axis. Default is NULL.}
+\item{legend_name}{A character string specifying the name of the legend. Default is "".}
 
-\item{yMinValue}{A numeric specifying the minimum value for the y-axis. Default is NULL.}
+\item{color_palette}{A character vector specifying the colors for the density lines. Default is a predefined color palette.}
 
-\item{yMaxValue}{A numeric specifying the maximum value for the y-axis. Default is NULL.}
-
-\item{legendName}{A character string specifying the name of the legend. Default is "".}
+\item{line_types}{A character vector specifying the line types for the density lines. Default is solid.}
 }
 \value{
 A ggplot object visualizing the density of utilities for the specified EQ5D versions and other instruments value sets.
@@ -59,6 +61,9 @@ This function creates a smoothed kernel density plot of utilities for different 
 }
 \examples{
 density_plot_theorical(value_sets_3L = "NL", value_sets_5L = "NL")
-value_set_other <- list(test_instrument = list(df = data.frame(HS=c(123, 456, 789), val = c(-0.3, 0.1, 0.75)), stateColumn = "HS", utilityColumn = "val"))
+instrument <- data.frame(HS=c(123, 456, 789), val = c(-0.3, 0.1, 0.75))
+value_set_other <- list(test_instrument = list(df = instrument, 
+                        stateColumn = "HS", 
+                        utilityColumn = "val"))
 density_plot_theorical(value_sets_3L = "HU", value_sets_others = value_set_other)
 }

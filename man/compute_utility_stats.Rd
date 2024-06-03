@@ -37,6 +37,8 @@ Mean single level transitions are calculated only for EQ-5D.
 }
 \examples{
 compute_utility_stats(value_sets_3L = "ES", value_sets_5L = "ES")
-value_set_other <- list(instrument1 = list(df = data.frame(state=c(1, 2, 3), utility = c(-1, 0, 1)), stateColumn = "state", utilityColumn = "utility"))
+value_set_other <- list(instrument1 = list(df = data.frame(state=c(1, 2, 3), utility = c(-1, 0, 1)), 
+                        stateColumn = "state", 
+                        utilityColumn = "utility"))
 compute_utility_stats(value_sets_3L = "AR", value_sets_others = value_set_other)
 }

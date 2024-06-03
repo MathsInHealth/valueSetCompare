@@ -7,10 +7,12 @@
 .write_Fstatistics_interpretation(errorbar_plot, utility_combinations = NULL)
 }
 \arguments{
-\item{intepretation_results}{A list containing the interpretation results for the F-statistics plot.}
+\item{errorbar_plot}{A ggplot object containing an error bar plot.}
+
+\item{utility_combinations}{A matrix or data frame of utility combinations corresponding to the x-axis labels (default is NULL).}
 }
 \value{
-A character vector containing the interpretation paragraphs for each combination of types in the ribbon plot.
+A character vector containing the interpretation paragraphs for each combination of types in the F-statistic plot.
 }
 \description{
 This function generates the interpretation of the results obtained from a F-statistics plot.
