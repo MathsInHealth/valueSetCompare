@@ -1,0 +1,283 @@
+
+R version 4.4.2 (2024-10-31 ucrt) -- "Pile of Leaves"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-w64-mingw32/x64
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "valueSetCompare"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> options(pager = "console")
+> base::assign(".ExTimings", "valueSetCompare-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('valueSetCompare')
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> base::assign(".old_wd", base::getwd(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("compute_F_statistics")
+> ### * compute_F_statistics
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: compute_F_statistics
+> ### Title: compute_F_statistics
+> ### Aliases: compute_F_statistics
+> 
+> ### ** Examples
+> 
+> ## No test: 
+>   # Define dimension names for EQ-5D-3L and EQ-5D-5L
+>   dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+>   dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+>   # Compute EQ-5D scores using the eq5dsuite package
+>   cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
++                                    country = "US", 
++                                    dim.names = dim.names.3L)
+>   cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
++                                    country = "US", 
++                                    dim.names = dim.names.5L)
+>   cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
++                                country = "US", 
++                                dim.names = dim.names.5L)
+>   # Define combinations of utility columns for F-statistics calculation
+>   utility_combinations <- matrix(c("EQ5D5L", "EQ5D3L", "EQ5D5L", "EQXW"), nrow = 2)
+>   # Compute F-statistics for the utility columns
+>   result <- compute_F_statistics(df = cdta, 
++                                  utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"), 
++                                  utility_combinations = utility_combinations)
+>   # Plot the results
+>   print(result$plot)
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("compute_F_statistics", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("compute_utility_stats")
+> ### * compute_utility_stats
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: compute_utility_stats
+> ### Title: compute_utility_stats
+> ### Aliases: compute_utility_stats
+> 
+> ### ** Examples
+> 
+> compute_utility_stats(value_sets_3L = "ES", value_sets_5L = "ES")
+            Number of health states Range of scale Value for best health state
+EQ5D3L (ES)                     243       1.654000                           1
+EQ5D5L (ES)                    3125       1.416199                           1
+            Number of health states WTD Percent of health states WTD
+EQ5D3L (ES)                          91                     37.44856
+EQ5D5L (ES)                         258                      8.25600
+            Utility difference between best and next best health state
+EQ5D3L (ES)                                                 0.08599997
+EQ5D5L (ES)                                                 0.04404480
+            Mean single level transition across all health states
+EQ5D3L (ES)                                            0.16023192
+EQ5D5L (ES)                                            0.07074213
+            SD of single level transition
+EQ5D3L (ES)                    0.03115927
+EQ5D5L (ES)                    0.01107583
+> value_set_other <- list(instrument1 = list(df = data.frame(state=c(1, 2, 3), utility = c(-1, 0, 1)), 
++                         stateColumn = "state", 
++                         utilityColumn = "utility"))
+> compute_utility_stats(value_sets_3L = "AU", value_sets_others = value_set_other)
+            Number of health states Range of scale Value for best health state
+EQ5D3L (AU)                     243          1.217                           1
+utility                           3          2.000                           1
+            Number of health states WTD Percent of health states WTD
+EQ5D3L (AU)                          33                     13.58025
+utility                               1                     33.33333
+            Utility difference between best and next best health state
+EQ5D3L (AU)                                                      0.158
+utility                                                          1.000
+            Mean single level transition across all health states
+EQ5D3L (AU)                                             0.1260947
+utility                                                        NA
+            SD of single level transition
+EQ5D3L (AU)                      0.024983
+utility                                NA
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("compute_utility_stats", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("density_plot_empirical")
+> ### * density_plot_empirical
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: density_plot_empirical
+> ### Title: density_plot_empirical
+> ### Aliases: density_plot_empirical
+> 
+> ### ** Examples
+> 
+> dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+> cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta, 
++                                 country = "US", 
++                                 dim.names = dim.names.3L)
+> dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+> cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
++                                 country = "US", 
++                                 dim.names = dim.names.5L)
+> cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
++                             country = "US", 
++                             dim.names = dim.names.5L)
+> density_plot_empirical(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("density_plot_empirical", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("density_plot_theorical")
+> ### * density_plot_theorical
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: density_plot_theorical
+> ### Title: density_plot_theorical
+> ### Aliases: density_plot_theorical
+> 
+> ### ** Examples
+> 
+> density_plot_theorical(value_sets_3L = "NL", value_sets_5L = "NL")
+> instrument <- data.frame(HS=c(123, 456, 789), val = c(-0.3, 0.1, 0.75))
+> value_set_other <- list(test_instrument = list(df = instrument, 
++                         stateColumn = "HS", 
++                         utilityColumn = "val"))
+> density_plot_theorical(value_sets_3L = "HU", value_sets_others = value_set_other)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("density_plot_theorical", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("severity_ribbon_plot")
+> ### * severity_ribbon_plot
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: severity_ribbon_plot
+> ### Title: severity_ribbon_plot
+> ### Aliases: severity_ribbon_plot
+> 
+> ### ** Examples
+> 
+> ## No test: 
+>   # Define dimension names for EQ-5D-3L and EQ-5D-5L
+>   dim.names.3L <- c("mobility", "selfcare", "activity", "pain", "anxiety")
+>   dim.names.5L <- c("mobility5L", "selfcare5L", "activity5L", "pain5L", "anxiety5L")
+>   # Compute EQ-5D scores using the eq5dsuite package
+>   cdta$EQ5D3L <- eq5dsuite::eq5d3l(x = cdta,
++                                    country = "US", 
++                                    dim.names = dim.names.3L)
+>   cdta$EQ5D5L <- eq5dsuite::eq5d5l(x = cdta, 
++                                    country = "US", 
++                                    dim.names = dim.names.5L)
+>   cdta$EQXW <- eq5dsuite::eqxw(x = cdta, 
++                                country = "US", 
++                                dim.names = dim.names.5L)
+>   # Get severity ribbon plot
+>   result <- severity_ribbon_plot(df = cdta, utility_columns = c("EQ5D3L", "EQ5D5L", "EQXW"))
+Warning: Use of `df[[y_min_value]]` is discouraged.
+ℹ Use `.data[[y_min_value]]` instead.
+Warning: Use of `df[[y_max_value]]` is discouraged.
+ℹ Use `.data[[y_max_value]]` instead.
+Warning: Use of `df[[y_min_value]]` is discouraged.
+ℹ Use `.data[[y_min_value]]` instead.
+Warning: Use of `df[[y_max_value]]` is discouraged.
+ℹ Use `.data[[y_max_value]]` instead.
+> ## End(No test)
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("severity_ribbon_plot", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("single_transition_plots")
+> ### * single_transition_plots
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: single_transition_plots
+> ### Title: single_transition_plots
+> ### Aliases: single_transition_plots
+> 
+> ### ** Examples
+> 
+> single_transition_plots(value_sets_5L = "IT")
+$`EQ5D5L (IT)`
+
+> single_transition_plots(value_sets_3L = c("JP", "US"))  
+$`EQ5D3L (JP)`
+
+$`EQ5D3L (US)`
+
+> single_transition_plots(value_sets_3L ="ES", 
++                         value_sets_5L = "ES", 
++                         value_sets_XW = "ES", 
++                         value_sets_XWR = "ES")        
+$`EQ5D3L (ES)`
+
+$`EQXWR (ES)`
+
+$`EQ5D5L (ES)`
+
+$`EQXW (ES)`
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("single_transition_plots", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> cleanEx()
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  72.8 8.14 81.72 NA NA 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')

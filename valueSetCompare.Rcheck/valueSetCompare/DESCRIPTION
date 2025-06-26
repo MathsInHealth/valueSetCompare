@@ -22,13 +22,12 @@ License: GPL (>= 2)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.3.2
-Depends: 
-    R (>= 3.5)
-Imports: 
-    dplyr,
-    ggplot2,
-    rlang,
-    eq5dsuite
-Suggests: 
-    testthat (>= 3.0.0)
+Depends: R (>= 3.5)
+Imports: dplyr, ggplot2, rlang, eq5dsuite
+Suggests: testthat (>= 3.0.0)
 Config/testthat/edition: 3
+NeedsCompilation: no
+Packaged: 2025-06-24 12:22:18 UTC; aeste
+Author: Kim Rand [aut, cre] (<https://orcid.org/0000-0001-7692-4099>),
+  Anabel Estévez-Carrillo [aut] (<https://orcid.org/0000-0001-8778-5055>)
+Built: R 4.4.2; ; 2025-06-24 12:23:27 UTC; windows

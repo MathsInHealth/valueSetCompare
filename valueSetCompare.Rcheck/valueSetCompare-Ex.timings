@@ -1,0 +1,7 @@
+name	user	system	elapsed
+compute_F_statistics	17.83	 0.95	18.99	
+compute_utility_stats	0.08	0.00	0.06	
+density_plot_empirical	0.35	0.00	0.43	
+density_plot_theorical	0.81	0.03	0.82	
+severity_ribbon_plot	50.31	 6.71	57.45	
+single_transition_plots	2.13	0.11	2.30	

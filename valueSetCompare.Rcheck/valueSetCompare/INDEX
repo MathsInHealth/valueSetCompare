@@ -1,0 +1,16 @@
+.add_EQ5D_utilities     .add_EQ5D_utilities
+.cut_variable           .cut_variable
+.makeWeightsGradient    .makeWeightsGradient
+.makeWeightsMixed       .makeWeightsMixed
+.makeWeightsTriangular
+                        .makeWeightsTriangular
+cdta                    cdta
+compute_F_statistics    compute_F_statistics
+compute_utility_stats   compute_utility_stats
+density_plot_empirical
+                        density_plot_empirical
+density_plot_theorical
+                        density_plot_theorical
+severity_ribbon_plot    severity_ribbon_plot
+single_transition_plots
+                        single_transition_plots
